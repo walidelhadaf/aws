@@ -45,8 +45,16 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
             cd /home/ubuntu/app || exit 1  # Vérifie que le répertoire existe
             git pull origin master || exit 1  # Assure-toi que git pull fonctionne
-            npm install || exit 1  # Assure-toi que npm install passe
-            pm2 restart all || pm2 start app.js  # Redémarre ou démarre l'app si nécessaire
+            
+            # Installer les dépendances pour chaque service
+            cd backend || exit 1
+            npm install || exit 1
+            cd ../frontend || exit 1
+            npm install || exit 1
+            
+            # Redémarrer l'application avec PM2
+            cd /home/ubuntu/app/backend || exit 1
+            pm2 restart all || pm2 start app.js
           EOF
 
       - name: Migrate Database on RDS
