@@ -43,7 +43,7 @@ jobs:
       - name: Deploy to AWS EC2
         run: |
           echo "Déploiement sur AWS EC2..."
-          ssh -o StrictHostKeyChecking=no -i my-new-key.pem ec2-user@${{ secrets.AWS_HOST }} << 'EOF'
+         ssh -i "/Users/macbook/Desktop/AWS PROJECT/infrastructure/my-new-key.pem" ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
             cd /home/ec2-user/app
             git pull origin master
             npm install
