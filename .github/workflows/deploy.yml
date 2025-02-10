@@ -27,7 +27,6 @@ jobs:
           cd backend  
           npm test
 
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -44,10 +43,10 @@ jobs:
         run: |
           echo "Déploiement sur AWS EC2..."
           ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
-            cd /home/ec2-user/app
-            git pull origin master
-            npm install
-            pm2 restart all
+            cd /home/ubuntu/app || exit 1  # Vérifie que le répertoire existe
+            git pull origin master || exit 1  # Assure-toi que git pull fonctionne
+            npm install || exit 1  # Assure-toi que npm install passe
+            pm2 restart all || pm2 start app.js  # Redémarre ou démarre l'app si nécessaire
           EOF
 
       - name: Migrate Database on RDS
@@ -55,4 +54,4 @@ jobs:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           echo "Exécution des migrations sur PostgreSQL RDS..."
-          psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f migrations.sql
+          psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f migrations.sql || exit 1  # Assure-toi que la commande psql passe
