@@ -27,6 +27,7 @@ jobs:
           cd backend  
           npm test
 
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -39,31 +40,9 @@ jobs:
           echo "${{ secrets.AWS_PRIVATE_KEY }}" > my-new-key.pem
           chmod 600 my-new-key.pem
 
-      - name: Create app directory on EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
-            mkdir -p /home/ec2-user/app
-          EOF
-
-      - name: Install Node.js and PM2 on EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
-            sudo apt update
-            sudo apt install -y nodejs npm
-            sudo npm install -g pm2
-          EOF
-
-      - name: Clone repository on EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
-            cd /home/ec2-user/app
-            if [ ! -d .git ]; then
-              git clone https://github.com/votre-utilisateur/votre-projet.git .
-            fi
-          EOF
-
       - name: Deploy to AWS EC2
         run: |
+          echo "Déploiement sur AWS EC2..."
           ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
             cd /home/ec2-user/app
             git pull origin master
@@ -71,14 +50,9 @@ jobs:
             pm2 restart all
           EOF
 
-      - name: Copy migrations file to EC2
-        run: |
-          scp -o StrictHostKeyChecking=no -i my-new-key.pem migrations.sql ubuntu@${{ secrets.AWS_HOST }}:/home/ec2-user/app/migrations.sql
-
       - name: Migrate Database on RDS
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i my-new-key.pem ubuntu@${{ secrets.AWS_HOST }} << 'EOF'
-            psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f /home/ec2-user/app/migrations.sql
-          EOF
+          echo "Exécution des migrations sur PostgreSQL RDS..."
+          psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f migrations.sql
