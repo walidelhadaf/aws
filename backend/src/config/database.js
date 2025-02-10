@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');// Corrige le chemin si nécessaire
 
 // Initialize Sequelize with your database configuration
-const sequelize = new Sequelize('mydb', 'root', 'password', {
+const sequelize = new Sequelize('mydb', 'root', 'my-password', {
   host: 'mydb-instance.cx8aacouafdp.eu-west-3.rds.amazonaws.com', // or your database host
   dialect: 'postgres', // or 'mysql', 'sqlite', 'mariadb', 'mssql'
   logging: false, // Disable logging if you don't want to see SQL queries in the console
