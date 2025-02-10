@@ -19,12 +19,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd backend  # Change ici si ton dossier est différent
+          cd backend  
           npm install
 
-
       - name: Run tests
-        run: npm test
+        run: |
+          cd backend  
+          npm test
+
 
   deploy:
     needs: build
