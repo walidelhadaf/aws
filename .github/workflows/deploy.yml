@@ -62,4 +62,4 @@ jobs:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           echo "Exécution des migrations sur PostgreSQL RDS..."
-          psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f migrations.sql || exit 1  # Assure-toi que la commande psql passe
+          psql -h ${{ secrets.DB_HOST }} -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f backend/migrations.sql
