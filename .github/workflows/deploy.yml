@@ -18,7 +18,10 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd backend  # Change ici si ton dossier est différent
+          npm install
+
 
       - name: Run tests
         run: npm test
