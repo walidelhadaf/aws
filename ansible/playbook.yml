@@ -1,0 +1,22 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Installer Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Démarrer Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+    - name: Installer PostgreSQL
+      apt:
+        name: postgresql
+        state: present
+    - name: Démarrer PostgreSQL
+      service:
+        name: postgresql
+        state: started
+        enabled: true
